@@ -20,7 +20,7 @@ class PurgeSvg {
 
     constructor (options) {
         if (typeof options === 'string' || typeof options === 'undefined') {
-            options = this.loadConfigFile(options)
+            options = PurgeSvg.loadConfigFile(options)
         }
 
         PurgeSvg.validateOptions(options)
@@ -28,7 +28,7 @@ class PurgeSvg {
         this.options = Object.assign(defaultOptions, options)
     }
 
-    loadConfigFile (configFile = CONFIG_FILENAME) {
+    static loadConfigFile (configFile = CONFIG_FILENAME) {
         try {
             return require(
                 path.resolve(process.cwd(), configFile)
