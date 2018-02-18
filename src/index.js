@@ -23,7 +23,7 @@ class PurgeSvg {
             options = this.loadConfigFile(options)
         }
 
-        this.validateOptions(options)
+        PurgeSvg.validateOptions(options)
 
         this.options = Object.assign(defaultOptions, options)
     }
@@ -38,7 +38,7 @@ class PurgeSvg {
         }
     }
 
-    validateOptions (options) {
+    static validateOptions (options) {
         if (typeof options !== 'object') {
             throw new TypeError(ERROR_OPTIONS_TYPE)
         }
