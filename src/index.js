@@ -77,7 +77,7 @@ class PurgeSvg {
         })
             .reduce(flatten, [])
             .filter(removeDuplicates)
-            .map(filePath => path.resolve(process.cwd(), filePath))
+            .map(filePath => path.resolve(filePath))
     }
 
     static extractContentIds (content) {

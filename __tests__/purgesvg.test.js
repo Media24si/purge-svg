@@ -115,8 +115,8 @@ describe('initialize purgesvg', () => {
         const ps = new PurgeSvg('./__tests__/test_examples/purgesvg.config.js')
 
         expect(ps.options).toMatchObject({
-            content: ['./__tests__/test_examples/a-file.html'],
-            svgs: ['./__tests__/test_examples/a-file.svg'],
+            content: ['./__tests__/test_examples/extract_content_ids/index.html'],
+            svgs: ['./__tests__/test_examples/svgs/icons.svg'],
             output: './__tests__/test_examples/temp/'
         })
     })
@@ -183,7 +183,7 @@ describe('content svg id-s extraction method', () => {
         ].sort())
     })
 
-    it('should remove duplicate ids from array', function () {
+    it('should remove duplicate ids from array', () => {
         const ids = PurgeSvg.extractContentIds(`${root}extract_content_ids/*`)
 
         expect(ids.sort()).toEqual([
