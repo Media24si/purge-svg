@@ -1,4 +1,6 @@
 import path from 'path'
+import fs from 'fs'
+import glob from 'glob'
 
 import {
     CONFIG_FILENAME,
@@ -51,6 +53,25 @@ class PurgeSvg {
         if (options.whitelist && !Array.isArray(options.whitelist)) {
             throw new TypeError(ERROR_WHITELIST_TYPE)
         }
+    }
+
+    static globPaths (paths) {
+        if (typeof paths === 'string') {
+            paths = [paths]
+        }
+
+        const removeDuplicates = (filePath, index, array) => array.indexOf(filePath) === index
+
+        return paths.map(filePath => {
+            if (fs.existsSync(filePath)) {
+                return [filePath]
+            }
+
+            return [...glob.sync(filePath, { nodir: true })]
+        })
+            .reduce((arr, initialVal) => [...arr, ...initialVal], [])
+            .filter(removeDuplicates)
+            .map(filePath => path.resolve(process.cwd(), filePath))
     }
 }
 

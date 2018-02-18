@@ -29,6 +29,9 @@
     "author": "",
     "license": "MIT",
     "dependencies": {
+        "app-root-path": "^2.0.1",
+        "fs": "0.0.1-security",
+        "glob": "^7.1.2",
         "path": "^0.12.7"
     },
     "devDependencies": {
