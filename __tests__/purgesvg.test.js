@@ -125,3 +125,33 @@ describe('full file path generation', () => {
         ].sort())
     })
 })
+
+describe('content svg id-s extraction method', () => {
+    it('should extract ids from a content file', () => {
+        const ids = PurgeSvg.extractContentIds(`${root}extract_content_ids/index.html`)
+
+        expect(ids).toEqual(['bookmark'])
+    })
+
+    it('should extract ids from multiple content file', () => {
+        const ids = PurgeSvg.extractContentIds([
+            `${root}extract_content_ids/index.html`,
+            `${root}extract_content_ids/index.php`
+        ])
+
+        expect(ids.sort()).toEqual([
+            `bookmark`,
+            `calendar`
+        ].sort())
+    })
+
+    it('should remove duplicate ids from array', function () {
+        const ids = PurgeSvg.extractContentIds(`${root}extract_content_ids/*`)
+
+        expect(ids.sort()).toEqual([
+            `bookmark`,
+            `calendar`,
+            'building'
+        ].sort())
+    })
+})

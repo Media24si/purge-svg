@@ -17,6 +17,9 @@ const defaultOptions = {
     whitelist: []
 }
 
+const removeDuplicates = (filePath, index, array) => array.indexOf(filePath) === index
+const flatten = (arr, initialVal) => [...arr, ...initialVal]
+
 class PurgeSvg {
     options
 
@@ -60,8 +63,6 @@ class PurgeSvg {
             paths = [paths]
         }
 
-        const removeDuplicates = (filePath, index, array) => array.indexOf(filePath) === index
-
         return paths.map(filePath => {
             if (fs.existsSync(filePath)) {
                 return [filePath]
@@ -69,9 +70,20 @@ class PurgeSvg {
 
             return [...glob.sync(filePath, { nodir: true })]
         })
-            .reduce((arr, initialVal) => [...arr, ...initialVal], [])
+            .reduce(flatten, [])
             .filter(removeDuplicates)
             .map(filePath => path.resolve(process.cwd(), filePath))
+    }
+
+    static extractContentIds (content) {
+        return PurgeSvg.globPaths(content)
+            .map(filePath => {
+                return fs.readFileSync(filePath, 'utf-8')
+                    .match(/\.svg#([A-Za-z0-9_-]+)"/g)
+                    .map(str => str.slice(5, -1))
+            })
+            .reduce(flatten, [])
+            .filter(removeDuplicates)
     }
 }
 
