@@ -1,0 +1,48 @@
+{
+    "name": "purgesvg",
+    "version": "0.0.1",
+    "description": "",
+    "main": "./lib/purgesvg.js",
+    "module": "./lib/purgesvg.es.js",
+    "jsnext:main": "./lib/purgesvg.es.js",
+    "directories": {
+        "lib": "lib",
+        "test": "__tests__"
+    },
+    "files": [
+        "lib/",
+        "bin/"
+    ],
+    "keywords": [
+        "optimization",
+        "remove",
+        "unused",
+        "svg",
+        "purge"
+    ],
+    "scripts": {
+        "dev": "rollup -c rollup.config.js -w",
+        "build": "rollup -c rollup.config.js",
+        "test": "jest __tests__/.+.test.js",
+        "lint": "eslint -c .eslintrc src/ __tests__"
+    },
+    "author": "",
+    "license": "MIT",
+    "devDependencies": {
+        "babel-core": "^6.26.0",
+        "babel-eslint": "^8.2.1",
+        "babel-plugin-external-helpers": "^6.22.0",
+        "babel-plugin-transform-class-properties": "^6.24.1",
+        "babel-preset-env": "^1.6.1",
+        "eslint": "^4.18.0",
+        "eslint-config-standard": "^11.0.0-beta.0",
+        "eslint-plugin-import": "^2.8.0",
+        "eslint-plugin-node": "^6.0.0",
+        "eslint-plugin-promise": "^3.6.0",
+        "eslint-plugin-standard": "^3.0.1",
+        "jest": "^22.3.0",
+        "rollup": "^0.56.1",
+        "rollup-plugin-babel": "^3.0.3",
+        "rollup-plugin-uglify": "^3.0.0"
+    }
+}
