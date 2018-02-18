@@ -5,16 +5,18 @@ import glob from 'glob'
 import {
     CONFIG_FILENAME,
     ERROR_CONFIG_FILE_LOADING,
-    ERROR_OPTIONS_TYPE,
     ERROR_MISSING_CONTENT,
     ERROR_MISSING_SVGS,
-    ERROR_WHITELIST_TYPE
+    ERROR_OPTIONS_TYPE,
+    ERROR_WHITELIST_TYPE,
+    ERROR_OUTPUT_TYPE
 } from './constants'
 
 const defaultOptions = {
     content: [],
     svgs: [],
-    whitelist: []
+    whitelist: [],
+    output: undefined
 }
 
 const removeDuplicates = (filePath, index, array) => array.indexOf(filePath) === index
@@ -52,6 +54,9 @@ class PurgeSvg {
         }
         if (!options.svgs || !options.svgs.length) {
             throw new TypeError(ERROR_MISSING_SVGS)
+        }
+        if (!options.output || typeof options.output !== 'string') {
+            throw new TypeError(ERROR_OUTPUT_TYPE)
         }
         if (options.whitelist && !Array.isArray(options.whitelist)) {
             throw new TypeError(ERROR_WHITELIST_TYPE)

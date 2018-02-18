@@ -6,7 +6,8 @@ import {
     ERROR_CONFIG_FILE_LOADING,
     ERROR_MISSING_CONTENT,
     ERROR_MISSING_SVGS,
-    ERROR_WHITELIST_TYPE
+    ERROR_WHITELIST_TYPE,
+    ERROR_OUTPUT_TYPE
 } from './../src/constants'
 
 describe('initialize purgesvg', () => {
@@ -20,6 +21,31 @@ describe('initialize purgesvg', () => {
         expect(() => {
             new PurgeSvg('invalid.config.js')
         }).toThrow(ERROR_CONFIG_FILE_LOADING)
+    })
+
+    it('throws an error with invalid output path', () => {
+        expect(() => {
+            new PurgeSvg({
+                svgs: ['icons.svg'],
+                content: ['index.html']
+            })
+        }).toThrow(ERROR_OUTPUT_TYPE)
+
+        expect(() => {
+            new PurgeSvg({
+                svgs: ['icons.svg'],
+                content: ['index.html'],
+                output: {}
+            })
+        }).toThrow(ERROR_OUTPUT_TYPE)
+
+        expect(() => {
+            new PurgeSvg({
+                svgs: ['icons.svg'],
+                content: ['index.html'],
+                output: []
+            })
+        }).toThrow(ERROR_OUTPUT_TYPE)
     })
 
     it('throws an error without content option', () => {
@@ -57,7 +83,17 @@ describe('initialize purgesvg', () => {
             new PurgeSvg({
                 content: 'index.html',
                 svgs: 'icons.svg',
+                output: './a-folder/',
                 whitelist: {}
+            })
+        }).toThrow(ERROR_WHITELIST_TYPE)
+
+        expect(() => {
+            new PurgeSvg({
+                content: 'index.html',
+                svgs: 'icons.svg',
+                output: './a-folder/',
+                whitelist: 'invalid'
             })
         }).toThrow(ERROR_WHITELIST_TYPE)
     })
@@ -65,7 +101,8 @@ describe('initialize purgesvg', () => {
     it('sets up options when providing an object', () => {
         const ps = new PurgeSvg({
             content: ['index.html'],
-            svgs: ['icons.svg']
+            svgs: ['icons.svg'],
+            output: './a-folder/'
         })
 
         expect(ps.options).toMatchObject({
@@ -79,7 +116,8 @@ describe('initialize purgesvg', () => {
 
         expect(ps.options).toMatchObject({
             content: ['./__tests__/test_examples/a-file.html'],
-            svgs: ['./__tests__/test_examples/a-file.svg']
+            svgs: ['./__tests__/test_examples/a-file.svg'],
+            output: './__tests__/test_examples/temp/'
         })
     })
 })
