@@ -1,5 +1,7 @@
 /* eslint no-new: "off" */
 import appRoot from 'app-root-path'
+import fs from 'fs'
+import { xml2js } from 'xml-js'
 
 import PurgeSvg from './../src'
 import {
@@ -9,6 +11,22 @@ import {
     ERROR_WHITELIST_TYPE,
     ERROR_OUTPUT_TYPE
 } from './../src/constants'
+
+const deleteFolderRecursive = path => {
+    if (fs.existsSync(path)) {
+        fs.readdirSync(path).forEach(file => {
+            const curPath = `${path}/${file}`
+
+            if (fs.lstatSync(curPath).isDirectory()) {
+                deleteFolderRecursive(curPath)
+            } else {
+                fs.unlinkSync(curPath)
+            }
+        })
+
+        fs.rmdirSync(path)
+    }
+}
 
 describe('initialize purgesvg', () => {
     it('throws an error without options', () => {
@@ -191,5 +209,32 @@ describe('content svg id-s extraction method', () => {
             `calendar`,
             'building'
         ].sort())
+    })
+})
+
+describe('purge method', () => {
+    it('should create a new svg file without unneeded symbols', () => {
+        const tempFolder = `${rootPath}/__tests__/test_examples/clean_svgs/temp/`
+        const iconPath = `${rootPath}/__tests__/test_examples/clean_svgs/temp/icons.svg`
+
+        expect(fs.existsSync(tempFolder)).toBeFalsy()
+
+        new PurgeSvg({
+            content: './__tests__/test_examples/clean_svgs/index.html',
+            svgs: './__tests__/test_examples/clean_svgs/icons.svg',
+            output: './__tests__/test_examples/clean_svgs/temp/'
+        }).purge()
+
+        expect(fs.existsSync(iconPath)).toBeTruthy()
+
+        let fileContent = xml2js(fs.readFileSync(iconPath, 'utf8'), { compact: true })
+        fileContent = JSON.stringify(fileContent)
+
+        expect(fileContent.includes('building')).toBeFalsy()
+        expect(fileContent.includes('bookmark')).toBeTruthy()
+
+        deleteFolderRecursive(tempFolder)
+
+        expect(fs.existsSync(tempFolder)).toBeFalsy()
     })
 })

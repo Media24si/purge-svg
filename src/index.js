@@ -1,4 +1,5 @@
 import path from 'path'
+import { xml2js, js2xml } from 'xml-js'
 import fs from 'fs'
 import glob from 'glob'
 
@@ -89,6 +90,34 @@ class PurgeSvg {
             })
             .reduce(flatten, [])
             .filter(removeDuplicates)
+    }
+
+    purge () {
+        let { content, svgs, output } = this.options
+        const contentIds = PurgeSvg.extractContentIds(content)
+
+        output = path.resolve(output)
+
+        if (!fs.existsSync(output)) {
+            fs.mkdirSync(output)
+        }
+
+        const removeUnneededSymbols = s => contentIds.includes(s._attributes.id)
+
+        PurgeSvg.globPaths(svgs)
+            .forEach(svgPath => {
+                const svg = xml2js(fs.readFileSync(svgPath, 'utf8'), { compact: true })
+
+                if (!Array.isArray(svg.svg.symbol)) {
+                    svg.svg.symbol = [svg.svg.symbol]
+                }
+
+                svg.svg.symbol = svg.svg.symbol.filter(removeUnneededSymbols)
+
+                const outputFile = path.resolve(output, path.basename(svgPath))
+
+                fs.writeFileSync(outputFile, js2xml(svg, { compact: true, spaces: 2 }))
+            })
     }
 }
 
