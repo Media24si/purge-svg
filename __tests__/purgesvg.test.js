@@ -213,11 +213,24 @@ describe('content svg id-s extraction method', () => {
 })
 
 describe('purge method', () => {
-    it('should create a new svg file without unneeded symbols', () => {
-        const tempFolder = `${rootPath}/__tests__/test_examples/clean_svgs/temp/`
-        const iconPath = `${rootPath}/__tests__/test_examples/clean_svgs/temp/icons.svg`
+    const tempFolder = `${rootPath}/__tests__/test_examples/clean_svgs/temp/`
+
+    beforeEach(() => {
+        if (fs.existsSync(tempFolder)) {
+            deleteFolderRecursive(tempFolder)
+        }
 
         expect(fs.existsSync(tempFolder)).toBeFalsy()
+    })
+
+    afterEach(() => {
+        deleteFolderRecursive(tempFolder)
+
+        expect(fs.existsSync(tempFolder)).toBeFalsy()
+    })
+
+    it('should create a new svg file without unneeded symbols', () => {
+        const iconPath = `${rootPath}/__tests__/test_examples/clean_svgs/temp/icons.svg`
 
         new PurgeSvg({
             content: './__tests__/test_examples/clean_svgs/index.html',
@@ -232,9 +245,23 @@ describe('purge method', () => {
 
         expect(fileContent.includes('building')).toBeFalsy()
         expect(fileContent.includes('bookmark')).toBeTruthy()
+    })
 
-        deleteFolderRecursive(tempFolder)
+    it('should work with single symbol too as it is not an array by default', () => {
+        const iconPath = `${rootPath}/__tests__/test_examples/clean_svgs/temp/icons-2.svg`
 
-        expect(fs.existsSync(tempFolder)).toBeFalsy()
+        new PurgeSvg({
+            content: './__tests__/test_examples/clean_svgs/index.html',
+            svgs: './__tests__/test_examples/clean_svgs/icons-2.svg',
+            output: './__tests__/test_examples/clean_svgs/temp/'
+        }).purge()
+
+        expect(fs.existsSync(iconPath)).toBeTruthy()
+
+        let fileContent = xml2js(fs.readFileSync(iconPath, 'utf8'), { compact: true })
+        fileContent = JSON.stringify(fileContent)
+
+        expect(fileContent.includes('building')).toBeFalsy()
+        expect(fileContent.includes('bookmark')).toBeTruthy()
     })
 })
