@@ -93,10 +93,12 @@ class PurgeSvg {
     }
 
     purge () {
-        let { content, svgs, output } = this.options
-        const contentIds = PurgeSvg.extractContentIds(content)
+        const contentIds = [
+            ...PurgeSvg.extractContentIds(this.options.content),
+            ...this.options.whitelist
+        ]
 
-        output = path.resolve(output)
+        const output = path.resolve(this.options.output)
 
         if (!fs.existsSync(output)) {
             fs.mkdirSync(output)
@@ -104,7 +106,7 @@ class PurgeSvg {
 
         const removeUnneededSymbols = s => contentIds.includes(s._attributes.id)
 
-        PurgeSvg.globPaths(svgs)
+        PurgeSvg.globPaths(this.options.svgs)
             .forEach(svgPath => {
                 const svg = xml2js(fs.readFileSync(svgPath, 'utf8'), { compact: true })
 

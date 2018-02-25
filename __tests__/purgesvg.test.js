@@ -264,4 +264,23 @@ describe('purge method', () => {
         expect(fileContent.includes('building')).toBeFalsy()
         expect(fileContent.includes('bookmark')).toBeTruthy()
     })
+
+    it('should not remove whitelisted symbols', () => {
+        const iconPath = `${rootPath}/__tests__/test_examples/clean_svgs/temp/icons.svg`
+
+        new PurgeSvg({
+            content: './__tests__/test_examples/clean_svgs/index.html',
+            svgs: './__tests__/test_examples/clean_svgs/icons.svg',
+            output: './__tests__/test_examples/clean_svgs/temp/',
+            whitelist: ['building']
+        }).purge()
+
+        expect(fs.existsSync(iconPath)).toBeTruthy()
+
+        let fileContent = xml2js(fs.readFileSync(iconPath, 'utf8'), { compact: true })
+        fileContent = JSON.stringify(fileContent)
+
+        expect(fileContent.includes('building')).toBeTruthy()
+        expect(fileContent.includes('bookmark')).toBeTruthy()
+    })
 })
