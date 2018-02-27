@@ -1,18 +1,20 @@
 {
     "name": "purgesvg",
     "version": "0.0.1",
+    "license": "MIT",
     "description": "",
-    "main": "./lib/purgesvg.js",
-    "module": "./lib/purgesvg.es.js",
-    "jsnext:main": "./lib/purgesvg.es.js",
+    "homepage": "https://github.com/Media24si/purge-svg",
+    "contributors": [
+        "Bostjan Oblak <bostjan@muha.cc> (https://bostjan.cloud/)",
+        "Jernej Pogačar"
+    ],
+    "bugs": {
+        "url": "https://github.com/Media24si/purge-svg/issues"
+    },
+    "main": "./src/purgesvg.js",
     "directories": {
-        "lib": "lib",
         "test": "__tests__"
     },
-    "files": [
-        "lib/",
-        "bin/"
-    ],
     "keywords": [
         "optimization",
         "remove",
@@ -21,36 +23,26 @@
         "purge"
     ],
     "scripts": {
-        "dev": "rollup -c rollup.config.js -w",
-        "build": "rollup -c rollup.config.js",
         "test": "jest __tests__/.+.test.js",
         "test-report": "npm run test -- --collectCoverage",
         "lint": "eslint -c .eslintrc src/ __tests__"
     },
-    "author": "",
-    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Media24si/purge-svg.git"
+    },
     "dependencies": {
         "app-root-path": "^2.0.1",
-        "fs": "0.0.1-security",
         "glob": "^7.1.2",
-        "path": "^0.12.7",
         "xml-js": "^1.6.2"
     },
     "devDependencies": {
-        "babel-core": "^6.26.0",
-        "babel-eslint": "^8.2.2",
-        "babel-plugin-external-helpers": "^6.22.0",
-        "babel-plugin-transform-class-properties": "^6.24.1",
-        "babel-preset-env": "^1.6.1",
         "eslint": "^4.18.1",
         "eslint-config-standard": "^11.0.0",
         "eslint-plugin-import": "^2.9.0",
         "eslint-plugin-node": "^6.0.1",
         "eslint-plugin-promise": "^3.6.0",
         "eslint-plugin-standard": "^3.0.1",
-        "jest": "^22.4.2",
-        "rollup": "^0.56.2",
-        "rollup-plugin-babel": "^3.0.3",
-        "rollup-plugin-uglify": "^3.0.0"
+        "jest": "^22.4.2"
     }
 }

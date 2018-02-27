@@ -1,9 +1,9 @@
-import path from 'path'
-import { xml2js, js2xml } from 'xml-js'
-import fs from 'fs'
-import glob from 'glob'
+const path = require('path')
+const {xml2js, js2xml} = require('xml-js')
+const fs = require('fs')
+const glob = require('glob')
 
-import {
+const {
     CONFIG_FILENAME,
     ERROR_CONFIG_FILE_LOADING,
     ERROR_MISSING_CONTENT,
@@ -11,7 +11,7 @@ import {
     ERROR_OPTIONS_TYPE,
     ERROR_WHITELIST_TYPE,
     ERROR_OUTPUT_TYPE
-} from './constants'
+} = require('./constants')
 
 const defaultOptions = {
     content: [],
@@ -20,12 +20,11 @@ const defaultOptions = {
     output: undefined
 }
 
-const removeDuplicates = (filePath, index, array) => array.indexOf(filePath) === index
+const removeDuplicates = (filePath, index, array) => array.indexOf(filePath) ===
+    index
 const flatten = (arr, initialVal) => [...arr, ...initialVal]
 
 class PurgeSvg {
-    options
-
     constructor (options) {
         if (typeof options === 'string' || typeof options === 'undefined') {
             options = PurgeSvg.loadConfigFile(options)
@@ -74,7 +73,7 @@ class PurgeSvg {
                 return [filePath]
             }
 
-            return [...glob.sync(filePath, { nodir: true })]
+            return [...glob.sync(filePath, {nodir: true})]
         })
             .reduce(flatten, [])
             .filter(removeDuplicates)
@@ -82,14 +81,11 @@ class PurgeSvg {
     }
 
     static extractContentIds (content) {
-        return PurgeSvg.globPaths(content)
-            .map(filePath => {
-                return fs.readFileSync(filePath, 'utf-8')
-                    .match(/\.svg#([A-Za-z0-9_-]+)"/g)
-                    .map(str => str.slice(5, -1))
-            })
-            .reduce(flatten, [])
-            .filter(removeDuplicates)
+        return PurgeSvg.globPaths(content).map(filePath => {
+            return fs.readFileSync(filePath, 'utf-8')
+                .match(/\.svg#([A-Za-z0-9_-]+)"/g)
+                .map(str => str.slice(5, -1))
+        }).reduce(flatten, []).filter(removeDuplicates)
     }
 
     purge () {
@@ -106,21 +102,22 @@ class PurgeSvg {
 
         const removeUnneededSymbols = s => contentIds.includes(s._attributes.id)
 
-        PurgeSvg.globPaths(this.options.svgs)
-            .forEach(svgPath => {
-                const svg = xml2js(fs.readFileSync(svgPath, 'utf8'), { compact: true })
+        PurgeSvg.globPaths(this.options.svgs).forEach(svgPath => {
+            const svg = xml2js(fs.readFileSync(svgPath, 'utf8'),
+                {compact: true})
 
-                if (!Array.isArray(svg.svg.symbol)) {
-                    svg.svg.symbol = [svg.svg.symbol]
-                }
+            if (!Array.isArray(svg.svg.symbol)) {
+                svg.svg.symbol = [svg.svg.symbol]
+            }
 
-                svg.svg.symbol = svg.svg.symbol.filter(removeUnneededSymbols)
+            svg.svg.symbol = svg.svg.symbol.filter(removeUnneededSymbols)
 
-                const outputFile = path.resolve(output, path.basename(svgPath))
+            const outputFile = path.resolve(output, path.basename(svgPath))
 
-                fs.writeFileSync(outputFile, js2xml(svg, { compact: true, spaces: 2 }))
-            })
+            fs.writeFileSync(outputFile,
+                js2xml(svg, {compact: true, spaces: 2}))
+        })
     }
 }
 
-export default PurgeSvg
+module.exports = PurgeSvg

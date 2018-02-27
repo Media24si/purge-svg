@@ -1,16 +1,16 @@
 /* eslint no-new: "off" */
-import appRoot from 'app-root-path'
-import fs from 'fs'
-import { xml2js } from 'xml-js'
+const appRoot = require('app-root-path')
+const fs = require('fs')
+const {xml2js} = require('xml-js')
 
-import PurgeSvg from './../src'
-import {
+const PurgeSvg = require('./../src')
+const {
     ERROR_CONFIG_FILE_LOADING,
     ERROR_MISSING_CONTENT,
     ERROR_MISSING_SVGS,
     ERROR_WHITELIST_TYPE,
     ERROR_OUTPUT_TYPE
-} from './../src/constants'
+} = require('./../src/constants')
 
 const deleteFolderRecursive = path => {
     if (fs.existsSync(path)) {
@@ -184,7 +184,8 @@ describe('full file path generation', () => {
 
 describe('content svg id-s extraction method', () => {
     it('should extract ids from a content file', () => {
-        const ids = PurgeSvg.extractContentIds(`${root}extract_content_ids/index.html`)
+        const ids = PurgeSvg.extractContentIds(
+            `${root}extract_content_ids/index.html`)
 
         expect(ids).toEqual(['bookmark'])
     })
@@ -240,30 +241,33 @@ describe('purge method', () => {
 
         expect(fs.existsSync(iconPath)).toBeTruthy()
 
-        let fileContent = xml2js(fs.readFileSync(iconPath, 'utf8'), { compact: true })
+        let fileContent = xml2js(fs.readFileSync(iconPath, 'utf8'),
+            {compact: true})
         fileContent = JSON.stringify(fileContent)
 
         expect(fileContent.includes('building')).toBeFalsy()
         expect(fileContent.includes('bookmark')).toBeTruthy()
     })
 
-    it('should work with single symbol too as it is not an array by default', () => {
-        const iconPath = `${rootPath}/__tests__/test_examples/clean_svgs/temp/icons-2.svg`
+    it('should work with single symbol too as it is not an array by default',
+        () => {
+            const iconPath = `${rootPath}/__tests__/test_examples/clean_svgs/temp/icons-2.svg`
 
-        new PurgeSvg({
-            content: './__tests__/test_examples/clean_svgs/index.html',
-            svgs: './__tests__/test_examples/clean_svgs/icons-2.svg',
-            output: './__tests__/test_examples/clean_svgs/temp/'
-        }).purge()
+            new PurgeSvg({
+                content: './__tests__/test_examples/clean_svgs/index.html',
+                svgs: './__tests__/test_examples/clean_svgs/icons-2.svg',
+                output: './__tests__/test_examples/clean_svgs/temp/'
+            }).purge()
 
-        expect(fs.existsSync(iconPath)).toBeTruthy()
+            expect(fs.existsSync(iconPath)).toBeTruthy()
 
-        let fileContent = xml2js(fs.readFileSync(iconPath, 'utf8'), { compact: true })
-        fileContent = JSON.stringify(fileContent)
+            let fileContent = xml2js(fs.readFileSync(iconPath, 'utf8'),
+                {compact: true})
+            fileContent = JSON.stringify(fileContent)
 
-        expect(fileContent.includes('building')).toBeFalsy()
-        expect(fileContent.includes('bookmark')).toBeTruthy()
-    })
+            expect(fileContent.includes('building')).toBeFalsy()
+            expect(fileContent.includes('bookmark')).toBeTruthy()
+        })
 
     it('should not remove whitelisted symbols', () => {
         const iconPath = `${rootPath}/__tests__/test_examples/clean_svgs/temp/icons.svg`
@@ -277,7 +281,8 @@ describe('purge method', () => {
 
         expect(fs.existsSync(iconPath)).toBeTruthy()
 
-        let fileContent = xml2js(fs.readFileSync(iconPath, 'utf8'), { compact: true })
+        let fileContent = xml2js(fs.readFileSync(iconPath, 'utf8'),
+            {compact: true})
         fileContent = JSON.stringify(fileContent)
 
         expect(fileContent.includes('building')).toBeTruthy()
