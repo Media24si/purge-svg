@@ -2,7 +2,7 @@
     "name": "purgesvg",
     "version": "0.0.1",
     "license": "MIT",
-    "description": "",
+    "description": "Remove unused svg symbols and optionaly merge svg files",
     "homepage": "https://github.com/Media24si/purge-svg",
     "contributors": [
         "Bostjan Oblak <bostjan@muha.cc> (https://bostjan.cloud/)",
