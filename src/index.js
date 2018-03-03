@@ -9,15 +9,13 @@ const {
     ERROR_MISSING_CONTENT,
     ERROR_MISSING_SVGS,
     ERROR_OPTIONS_TYPE,
-    ERROR_WHITELIST_TYPE,
-    ERROR_OUTPUT_TYPE
+    ERROR_WHITELIST_TYPE
 } = require('./constants')
 
 const defaultOptions = {
     content: [],
     svgs: [],
-    whitelist: [],
-    output: undefined
+    whitelist: {'*': new Set}
 }
 
 const removeDuplicates = (filePath, index, array) => array.indexOf(filePath) ===
@@ -55,10 +53,7 @@ class PurgeSvg {
         if (!options.svgs || !options.svgs.length) {
             throw new TypeError(ERROR_MISSING_SVGS)
         }
-        if (!options.output || typeof options.output !== 'string') {
-            throw new TypeError(ERROR_OUTPUT_TYPE)
-        }
-        if (options.whitelist && !Array.isArray(options.whitelist)) {
+        if (options.whitelist && (typeof options.whitelist !== 'object' || Array.isArray(options.whitelist) )) {
             throw new TypeError(ERROR_WHITELIST_TYPE)
         }
     }
@@ -80,43 +75,113 @@ class PurgeSvg {
             .map(filePath => path.resolve(filePath))
     }
 
+    static prepareSvgPaths (svgs) {
+        let svgArray = []
+
+        svgs.forEach((svg) => {
+            if (typeof svg === 'string') {
+                svg = {in: svg}
+            }
+
+            let paths = fs.existsSync(svg.in) ? [svg.in] : glob.sync(svg.in, {nodir: true})
+
+            paths.forEach((svgPath) => {
+                let out = svg.out || path.resolve(svgPath).replace('.svg', '.purged.svg')
+
+                // check if output is a folder
+                if (!out.endsWith('.svg')) {
+                    out = path.format({
+                        dir: out,
+                        base: path.basename(svgPath)
+                    })
+                }
+
+                svgArray.push({
+                    filename: path.basename(svgPath),
+                    in: path.resolve(svgPath),
+                    out,
+                    prefix: svg.prefix || ''
+                })
+            })
+        })
+
+        return svgArray
+    }
+
     static extractContentIds (content) {
-        return PurgeSvg.globPaths(content).map(filePath => {
-            return fs.readFileSync(filePath, 'utf-8')
-                .match(/\.svg#([A-Za-z0-9_-]+)"/g)
-                .map(str => str.slice(5, -1))
-        }).reduce(flatten, []).filter(removeDuplicates)
+        const regex = /xlink:href="([\S]+)#([\S]+)"/g
+
+        let icons = {}
+        PurgeSvg.globPaths(content).map(filePath => {
+            let m
+            let content = fs.readFileSync(filePath, 'utf-8')
+
+            while ((m = regex.exec(content)) !== null) {
+                if (m.index === regex.lastIndex) {
+                    regex.lastIndex++
+                }
+
+                let svgFile = path.basename(m[1])
+
+                if (!(icons[svgFile] instanceof Set)) {
+                    icons[svgFile] = new Set
+                }
+
+                icons[svgFile].add(m[2])
+            }
+        })
+
+        return icons
     }
 
     purge () {
-        const contentIds = [
-            ...PurgeSvg.extractContentIds(this.options.content),
-            ...this.options.whitelist
-        ]
+        const contentIds = PurgeSvg.extractContentIds(this.options.content)
 
-        const output = path.resolve(this.options.output)
+        let outSvgs = {}
 
-        if (!fs.existsSync(output)) {
-            fs.mkdirSync(output)
-        }
+        PurgeSvg.prepareSvgPaths(this.options.svgs).forEach((svgObj) => {
+            let ids = new Set([
+                ...(contentIds[svgObj.filename] || []),
+                ...(this.options.whitelist[svgObj.filename] || []),
+                ...(this.options.whitelist['*'] || []),
+            ])
 
-        const removeUnneededSymbols = s => contentIds.includes(s._attributes.id)
-
-        PurgeSvg.globPaths(this.options.svgs).forEach(svgPath => {
-            const svg = xml2js(fs.readFileSync(svgPath, 'utf8'),
-                {compact: true})
-
+            const svg = xml2js(fs.readFileSync(svgObj.in, 'utf8'), {compact: true})
             if (!Array.isArray(svg.svg.symbol)) {
                 svg.svg.symbol = [svg.svg.symbol]
             }
 
-            svg.svg.symbol = svg.svg.symbol.filter(removeUnneededSymbols)
+            if ( !Array.isArray(outSvgs[svgObj.out]) )
+                outSvgs[svgObj.out] = [];
 
-            const outputFile = path.resolve(output, path.basename(svgPath))
-
-            fs.writeFileSync(outputFile,
-                js2xml(svg, {compact: true, spaces: 2}))
+            outSvgs[svgObj.out].push(
+                ...svg.svg.symbol.filter((s) => ids.has(s._attributes.id))
+            )
         })
+
+        for (let filename in outSvgs) {
+            let svg = {
+                _declaration: {
+                    _attributes: {
+                        version: '1.0',
+                        encoding: 'UTF-8'
+                    }
+                },
+                svg: {
+                    _attributes: {
+                        xmlns: 'http://www.w3.org/2000/svg',
+                        style: 'display: none;'
+                    },
+                    symbol: outSvgs[filename]
+                }
+            }
+
+            if ( !fs.existsSync( path.dirname(filename) ) ) {
+                fs.mkdirSync(path.dirname(filename))
+            }
+
+            fs.writeFileSync(filename, js2xml(svg, {compact: true, spaces: 2}))
+        }
     }
 }
 

@@ -12,6 +12,9 @@ const {
     ERROR_OUTPUT_TYPE
 } = require('./../src/constants')
 
+const root = './__tests__/test_examples/'
+const rootPath = appRoot.path
+
 const deleteFolderRecursive = path => {
     if (fs.existsSync(path)) {
         fs.readdirSync(path).forEach(file => {
@@ -39,31 +42,6 @@ describe('initialize purgesvg', () => {
         expect(() => {
             new PurgeSvg('invalid.config.js')
         }).toThrow(ERROR_CONFIG_FILE_LOADING)
-    })
-
-    it('throws an error with invalid output path', () => {
-        expect(() => {
-            new PurgeSvg({
-                svgs: ['icons.svg'],
-                content: ['index.html']
-            })
-        }).toThrow(ERROR_OUTPUT_TYPE)
-
-        expect(() => {
-            new PurgeSvg({
-                svgs: ['icons.svg'],
-                content: ['index.html'],
-                output: {}
-            })
-        }).toThrow(ERROR_OUTPUT_TYPE)
-
-        expect(() => {
-            new PurgeSvg({
-                svgs: ['icons.svg'],
-                content: ['index.html'],
-                output: []
-            })
-        }).toThrow(ERROR_OUTPUT_TYPE)
     })
 
     it('throws an error without content option', () => {
@@ -100,17 +78,15 @@ describe('initialize purgesvg', () => {
         expect(() => {
             new PurgeSvg({
                 content: 'index.html',
-                svgs: 'icons.svg',
-                output: './a-folder/',
-                whitelist: {}
+                svgs: ['icons.svg'],
+                whitelist: []
             })
         }).toThrow(ERROR_WHITELIST_TYPE)
 
         expect(() => {
             new PurgeSvg({
                 content: 'index.html',
-                svgs: 'icons.svg',
-                output: './a-folder/',
+                svgs: ['icons.svg'],
                 whitelist: 'invalid'
             })
         }).toThrow(ERROR_WHITELIST_TYPE)
@@ -139,9 +115,6 @@ describe('initialize purgesvg', () => {
         })
     })
 })
-
-const root = './__tests__/test_examples/'
-const rootPath = appRoot.path
 
 describe('full file path generation', () => {
     it('should change paths to absolute', () => {
@@ -182,12 +155,157 @@ describe('full file path generation', () => {
     })
 })
 
+describe('svg paths generation', () => {
+    it('should change filepath to object with full data', () => {
+        expect(PurgeSvg.prepareSvgPaths([`${root}clean_svgs/icons.svg`])).toEqual([
+            {
+                filename: 'icons.svg',
+                in: `${rootPath}/__tests__/test_examples/clean_svgs/icons.svg`,
+                out: `${rootPath}/__tests__/test_examples/clean_svgs/icons.purged.svg`,
+                prefix: ''
+            }
+        ])
+
+        expect(PurgeSvg.prepareSvgPaths([
+            `${root}clean_svgs/icons.svg`,
+            `${root}clean_svgs/icons-2.svg`
+        ])).toEqual([
+            {
+                filename: 'icons.svg',
+                in: `${rootPath}/__tests__/test_examples/clean_svgs/icons.svg`,
+                out: `${rootPath}/__tests__/test_examples/clean_svgs/icons.purged.svg`,
+                prefix: ''
+            },
+            {
+                filename: 'icons-2.svg',
+                in: `${rootPath}/__tests__/test_examples/clean_svgs/icons-2.svg`,
+                out: `${rootPath}/__tests__/test_examples/clean_svgs/icons-2.purged.svg`,
+                prefix: ''
+            }
+        ])
+    })
+
+    it('should keep same name but set folder for output', () => {
+        expect(PurgeSvg.prepareSvgPaths([
+            {in: `${root}clean_svgs/icons.svg`, 'out': '/foo/bar'}
+        ])).toEqual([
+            {
+                filename: 'icons.svg',
+                in: `${rootPath}/__tests__/test_examples/clean_svgs/icons.svg`,
+                out: `/foo/bar/icons.svg`,
+                prefix: ''
+            }
+        ])
+
+        expect(PurgeSvg.prepareSvgPaths([
+            {in: `${root}clean_svgs/icons.svg`, 'out': '/foo/bar'},
+            {in: `${root}clean_svgs/icons-2.svg`, 'out': '/foo/bar'}
+        ])).toEqual([
+            {
+                filename: 'icons.svg',
+                in: `${rootPath}/__tests__/test_examples/clean_svgs/icons.svg`,
+                out: `/foo/bar/icons.svg`,
+                prefix: ''
+            },
+            {
+                filename: 'icons-2.svg',
+                in: `${rootPath}/__tests__/test_examples/clean_svgs/icons-2.svg`,
+                out: `/foo/bar/icons-2.svg`,
+                prefix: ''
+            }
+        ])
+    })
+
+    it('should change glob path to array of objects', () => {
+        expect(PurgeSvg.prepareSvgPaths([`${root}clean_svgs/*.svg`])).toEqual([
+            {
+                filename: 'icons-2.svg',
+                in: `${rootPath}/__tests__/test_examples/clean_svgs/icons-2.svg`,
+                out: `${rootPath}/__tests__/test_examples/clean_svgs/icons-2.purged.svg`,
+                prefix: ''
+            },
+            {
+                filename: 'icons.svg',
+                in: `${rootPath}/__tests__/test_examples/clean_svgs/icons.svg`,
+                out: `${rootPath}/__tests__/test_examples/clean_svgs/icons.purged.svg`,
+                prefix: ''
+            }
+        ])
+    })
+
+    it('should change object with only in to full object', () => {
+        expect(PurgeSvg.prepareSvgPaths([{in: `${rootPath}/__tests__/test_examples/clean_svgs/icons.svg`}])).toEqual([
+            {
+                filename: 'icons.svg',
+                in: `${rootPath}/__tests__/test_examples/clean_svgs/icons.svg`,
+                out: `${rootPath}/__tests__/test_examples/clean_svgs/icons.purged.svg`,
+                prefix: ''
+            }
+        ])
+    })
+
+    it('should change object with only in (glob) to full object', () => {
+        expect(PurgeSvg.prepareSvgPaths([{in: `${rootPath}/__tests__/test_examples/clean_svgs/*.svg`}])).toEqual([
+            {
+                filename: 'icons-2.svg',
+                in: `${rootPath}/__tests__/test_examples/clean_svgs/icons-2.svg`,
+                out: `${rootPath}/__tests__/test_examples/clean_svgs/icons-2.purged.svg`,
+                prefix: ''
+            },
+            {
+                filename: 'icons.svg',
+                in: `${rootPath}/__tests__/test_examples/clean_svgs/icons.svg`,
+                out: `${rootPath}/__tests__/test_examples/clean_svgs/icons.purged.svg`,
+                prefix: ''
+            }
+        ])
+    })
+
+    it('should leave full object', () => {
+        expect(PurgeSvg.prepareSvgPaths([{
+            in: `${rootPath}/__tests__/test_examples/clean_svgs/icons.svg`,
+            out: `${rootPath}/__tests__/test_examples/test_folder/icons.svg`,
+            prefix: 'foo'
+        }])).toEqual([
+            {
+                filename: 'icons.svg',
+                in: `${rootPath}/__tests__/test_examples/clean_svgs/icons.svg`,
+                out: `${rootPath}/__tests__/test_examples/test_folder/icons.svg`,
+                prefix: 'foo'
+            }
+        ])
+    })
+
+    it('should levt object with glob path', () => {
+        expect(PurgeSvg.prepareSvgPaths([{
+            in: `${rootPath}/__tests__/test_examples/clean_svgs/*.svg`,
+            out: `${rootPath}/__tests__/test_examples/test_folder/icons.svg`,
+            prefix: 'foo'
+        }])).toEqual([
+            {
+                filename: 'icons-2.svg',
+                in: `${rootPath}/__tests__/test_examples/clean_svgs/icons-2.svg`,
+                out: `${rootPath}/__tests__/test_examples/test_folder/icons.svg`,
+                prefix: 'foo'
+            },
+            {
+                filename: 'icons.svg',
+                in: `${rootPath}/__tests__/test_examples/clean_svgs/icons.svg`,
+                out: `${rootPath}/__tests__/test_examples/test_folder/icons.svg`,
+                prefix: 'foo'
+            }
+        ])
+    })
+})
+
 describe('content svg id-s extraction method', () => {
     it('should extract ids from a content file', () => {
         const ids = PurgeSvg.extractContentIds(
             `${root}extract_content_ids/index.html`)
 
-        expect(ids).toEqual(['bookmark'])
+        expect(ids).toEqual({
+            'icons.svg': new Set(['bookmark'])
+        })
     })
 
     it('should extract ids from multiple content file', () => {
@@ -196,21 +314,30 @@ describe('content svg id-s extraction method', () => {
             `${root}extract_content_ids/index.php`
         ])
 
-        expect(ids.sort()).toEqual([
-            `bookmark`,
-            `calendar`
-        ].sort())
+        expect(ids).toEqual({
+            'icons.svg': new Set(['bookmark', 'calendar'])
+        })
     })
 
     it('should remove duplicate ids from array', () => {
-        const ids = PurgeSvg.extractContentIds(`${root}extract_content_ids/*`)
+        const ids = PurgeSvg.extractContentIds(`${root}extract_content_ids/index*`)
 
-        expect(ids.sort()).toEqual([
-            `bookmark`,
-            `calendar`,
-            'building'
-        ].sort())
+        expect(ids).toEqual({
+            'icons.svg': new Set([`bookmark`, `calendar`, 'building'])
+        })
     })
+
+    it('should extract only filenames from paths', () => {
+        const ids = PurgeSvg.extractContentIds(
+            `${root}extract_content_ids/multiple_files.html`)
+
+        expect(ids).toEqual({
+            'icons.svg': new Set(['bookmark', 'money']),
+            'foo.svg': new Set(['rocket']),
+            'bar.svg': new Set(['euro'])
+        })
+    })
+
 })
 
 describe('purge method', () => {
@@ -231,52 +358,55 @@ describe('purge method', () => {
     })
 
     it('should create a new svg file without unneeded symbols', () => {
-        const iconPath = `${rootPath}/__tests__/test_examples/clean_svgs/temp/icons.svg`
+        const iconPath = `${tempFolder}icons.svg`
 
         new PurgeSvg({
             content: './__tests__/test_examples/clean_svgs/index.html',
-            svgs: './__tests__/test_examples/clean_svgs/icons.svg',
-            output: './__tests__/test_examples/clean_svgs/temp/'
+            svgs: [{
+                in: './__tests__/test_examples/clean_svgs/icons.svg',
+                out: tempFolder
+            }]
         }).purge()
 
         expect(fs.existsSync(iconPath)).toBeTruthy()
 
-        let fileContent = xml2js(fs.readFileSync(iconPath, 'utf8'),
-            {compact: true})
+        let fileContent = xml2js(fs.readFileSync(iconPath, 'utf8'), {compact: true})
         fileContent = JSON.stringify(fileContent)
 
         expect(fileContent.includes('building')).toBeFalsy()
         expect(fileContent.includes('bookmark')).toBeTruthy()
     })
 
-    it('should work with single symbol too as it is not an array by default',
-        () => {
-            const iconPath = `${rootPath}/__tests__/test_examples/clean_svgs/temp/icons-2.svg`
+    it('should work with single symbol too as it is not an array by default', () => {
+        const iconPath = `${tempFolder}icons-2.svg`
 
-            new PurgeSvg({
-                content: './__tests__/test_examples/clean_svgs/index.html',
-                svgs: './__tests__/test_examples/clean_svgs/icons-2.svg',
-                output: './__tests__/test_examples/clean_svgs/temp/'
-            }).purge()
+        new PurgeSvg({
+            content: './__tests__/test_examples/clean_svgs/index-2.html',
+            svgs: [{
+                in: './__tests__/test_examples/clean_svgs/icons-2.svg',
+                out: tempFolder
+            }],
+        }).purge()
 
-            expect(fs.existsSync(iconPath)).toBeTruthy()
+        expect(fs.existsSync(iconPath)).toBeTruthy()
 
-            let fileContent = xml2js(fs.readFileSync(iconPath, 'utf8'),
-                {compact: true})
-            fileContent = JSON.stringify(fileContent)
+        let fileContent = xml2js(fs.readFileSync(iconPath, 'utf8'), {compact: true})
+        fileContent = JSON.stringify(fileContent)
 
-            expect(fileContent.includes('building')).toBeFalsy()
-            expect(fileContent.includes('bookmark')).toBeTruthy()
-        })
+        expect(fileContent.includes('building')).toBeFalsy()
+        expect(fileContent.includes('bookmark')).toBeTruthy()
+    })
 
     it('should not remove whitelisted symbols', () => {
-        const iconPath = `${rootPath}/__tests__/test_examples/clean_svgs/temp/icons.svg`
+        const iconPath = `${tempFolder}icons.svg`
 
         new PurgeSvg({
             content: './__tests__/test_examples/clean_svgs/index.html',
-            svgs: './__tests__/test_examples/clean_svgs/icons.svg',
-            output: './__tests__/test_examples/clean_svgs/temp/',
-            whitelist: ['building']
+            svgs: [{
+                in: './__tests__/test_examples/clean_svgs/icons.svg',
+                out: tempFolder
+            }],
+            whitelist: {'*': ['building']}
         }).purge()
 
         expect(fs.existsSync(iconPath)).toBeTruthy()
