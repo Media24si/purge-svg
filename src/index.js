@@ -18,8 +18,7 @@ const defaultOptions = {
     whitelist: {'*': new Set()}
 }
 
-const removeDuplicates = (filePath, index, array) => array.indexOf(filePath) ===
-    index
+const removeDuplicates = (filePath, index, array) => array.indexOf(filePath) === index
 const flatten = (arr, initialVal) => [...arr, ...initialVal]
 
 class PurgeSvg {
@@ -76,16 +75,14 @@ class PurgeSvg {
     }
 
     static prepareSvgPaths (svgs) {
-        let svgArray = []
-
-        svgs.forEach((svg) => {
+        return svgs.map(svg => {
             if (typeof svg === 'string') {
                 svg = {in: svg}
             }
 
-            let paths = fs.existsSync(svg.in) ? [svg.in] : glob.sync(svg.in, {nodir: true})
+            const paths = fs.existsSync(svg.in) ? [svg.in] : glob.sync(svg.in, {nodir: true})
 
-            paths.forEach((svgPath) => {
+            return paths.map(svgPath => {
                 let out = svg.out || path.resolve(svgPath).replace('.svg', '.purged.svg')
 
                 // check if output is a folder
@@ -96,32 +93,31 @@ class PurgeSvg {
                     })
                 }
 
-                svgArray.push({
+                return {
                     filename: path.basename(svgPath),
                     in: path.resolve(svgPath),
                     out,
                     prefix: svg.prefix || ''
-                })
+                }
             })
-        })
-
-        return svgArray
+        }).reduce(flatten, [])
     }
 
     static extractContentIds (content) {
         const regex = /xlink:href="([\S]+)#([\S]+)"/g
 
-        let icons = {}
-        PurgeSvg.globPaths(content).map(filePath => {
-            let m
-            let content = fs.readFileSync(filePath, 'utf-8')
+        const icons = {}
 
+        PurgeSvg.globPaths(content).forEach(filePath => {
+            const content = fs.readFileSync(filePath, 'utf-8')
+
+            let m
             while ((m = regex.exec(content)) !== null) {
                 if (m.index === regex.lastIndex) {
                     regex.lastIndex++
                 }
 
-                let svgFile = path.basename(m[1])
+                const svgFile = path.basename(m[1])
 
                 if (!(icons[svgFile] instanceof Set)) {
                     icons[svgFile] = new Set()
@@ -137,10 +133,10 @@ class PurgeSvg {
     purge () {
         const contentIds = PurgeSvg.extractContentIds(this.options.content)
 
-        let outSvgs = {}
+        const outSvgs = {}
 
-        PurgeSvg.prepareSvgPaths(this.options.svgs).forEach((svgObj) => {
-            let ids = new Set([
+        PurgeSvg.prepareSvgPaths(this.options.svgs).forEach(svgObj => {
+            const ids = new Set([
                 ...(contentIds[svgObj.filename] || []),
                 ...(this.options.whitelist[svgObj.filename] || []),
                 ...(this.options.whitelist['*'] || [])
@@ -161,7 +157,7 @@ class PurgeSvg {
         })
 
         for (let filename in outSvgs) {
-            let svg = {
+            const svg = {
                 _declaration: {
                     _attributes: {
                         version: '1.0',
