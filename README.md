@@ -13,3 +13,7 @@ It also enables you to merge more SVG file into one and reducing network request
 **:bangbang: Warning :bangbang:️**
 
 Be aware that external SVG sprites are not supported in any version of IE. If you need support for IE check out [svg4everybody](https://github.com/jonathantneal/svg4everybody). 
+
+**:heart: Gratitude :heart:**
+
+This package was inspired (and some code copied) from [Purgecss](https://github.com/FullHuman/purgecss)

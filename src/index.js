@@ -143,6 +143,11 @@ class PurgeSvg {
             ])
 
             const svg = xml2js(fs.readFileSync(svgObj.in, 'utf8'), {compact: true})
+
+            if (typeof svg.svg.symbol === 'undefined') {
+                return
+            }
+
             if (!Array.isArray(svg.svg.symbol)) {
                 svg.svg.symbol = [svg.svg.symbol]
             }

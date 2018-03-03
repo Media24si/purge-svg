@@ -99,6 +99,33 @@ describe('purge method', () => {
         expect(fileContent.includes('building')).toBeTruthy()
         expect(fileContent.includes('bookmark')).toBeTruthy()
     })
+
+    it('should not break with plain svg', () => {
+        const iconPath = `${tempFolder}icons.svg`
+
+        new PurgeSvg({
+            content: './__tests__/test_examples/clean_svgs/index.html',
+            svgs: [
+                {
+                    in: './__tests__/test_examples/clean_svgs/*.svg',
+                    out: tempFolder
+                },
+                {
+                    in: './__tests__/test_examples/single.svg',
+                    out: tempFolder
+                }
+            ],
+            whitelist: {}
+        }).purge()
+
+        expect(fs.existsSync(iconPath)).toBeTruthy()
+
+        let fileContent = xml2js(fs.readFileSync(iconPath, 'utf8'), {compact: true})
+        fileContent = JSON.stringify(fileContent)
+
+        expect(fileContent.includes('building')).toBeFalsy()
+        expect(fileContent.includes('bookmark')).toBeTruthy()
+    })
 })
 
 describe('purge and merge', () => {
@@ -125,8 +152,7 @@ describe('purge and merge', () => {
             content: `${folder}merge.html`,
             svgs: [{
                 in: `${folder}*.svg`,
-                out: iconPath,
-
+                out: iconPath
             }],
             whitelist: {}
         }).purge()
