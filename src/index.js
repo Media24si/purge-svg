@@ -15,7 +15,7 @@ const {
 const defaultOptions = {
     content: [],
     svgs: [],
-    whitelist: {'*': new Set}
+    whitelist: {'*': new Set()}
 }
 
 const removeDuplicates = (filePath, index, array) => array.indexOf(filePath) ===
@@ -53,7 +53,7 @@ class PurgeSvg {
         if (!options.svgs || !options.svgs.length) {
             throw new TypeError(ERROR_MISSING_SVGS)
         }
-        if (options.whitelist && (typeof options.whitelist !== 'object' || Array.isArray(options.whitelist) )) {
+        if (options.whitelist && (typeof options.whitelist !== 'object' || Array.isArray(options.whitelist))) {
             throw new TypeError(ERROR_WHITELIST_TYPE)
         }
     }
@@ -124,7 +124,7 @@ class PurgeSvg {
                 let svgFile = path.basename(m[1])
 
                 if (!(icons[svgFile] instanceof Set)) {
-                    icons[svgFile] = new Set
+                    icons[svgFile] = new Set()
                 }
 
                 icons[svgFile].add(m[2])
@@ -143,7 +143,7 @@ class PurgeSvg {
             let ids = new Set([
                 ...(contentIds[svgObj.filename] || []),
                 ...(this.options.whitelist[svgObj.filename] || []),
-                ...(this.options.whitelist['*'] || []),
+                ...(this.options.whitelist['*'] || [])
             ])
 
             const svg = xml2js(fs.readFileSync(svgObj.in, 'utf8'), {compact: true})
@@ -151,8 +151,9 @@ class PurgeSvg {
                 svg.svg.symbol = [svg.svg.symbol]
             }
 
-            if ( !Array.isArray(outSvgs[svgObj.out]) )
-                outSvgs[svgObj.out] = [];
+            if (!Array.isArray(outSvgs[svgObj.out])) {
+                outSvgs[svgObj.out] = []
+            }
 
             outSvgs[svgObj.out].push(
                 ...svg.svg.symbol.filter((s) => ids.has(s._attributes.id))
@@ -176,7 +177,7 @@ class PurgeSvg {
                 }
             }
 
-            if ( !fs.existsSync( path.dirname(filename) ) ) {
+            if (!fs.existsSync(path.dirname(filename))) {
                 fs.mkdirSync(path.dirname(filename))
             }
 

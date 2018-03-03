@@ -8,8 +8,7 @@ const {
     ERROR_CONFIG_FILE_LOADING,
     ERROR_MISSING_CONTENT,
     ERROR_MISSING_SVGS,
-    ERROR_WHITELIST_TYPE,
-    ERROR_OUTPUT_TYPE
+    ERROR_WHITELIST_TYPE
 } = require('./../src/constants')
 
 const root = './__tests__/test_examples/'
@@ -337,7 +336,6 @@ describe('content svg id-s extraction method', () => {
             'bar.svg': new Set(['euro'])
         })
     })
-
 })
 
 describe('purge method', () => {
@@ -385,7 +383,7 @@ describe('purge method', () => {
             svgs: [{
                 in: './__tests__/test_examples/clean_svgs/icons-2.svg',
                 out: tempFolder
-            }],
+            }]
         }).purge()
 
         expect(fs.existsSync(iconPath)).toBeTruthy()
