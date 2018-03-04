@@ -11,7 +11,7 @@
     "bugs": {
         "url": "https://github.com/Media24si/purge-svg/issues"
     },
-    "main": "./src/purgesvg.js",
+    "main": "./src/index.js",
     "bin": "./bin/purgesvg",
     "directories": {
         "test": "__tests__"

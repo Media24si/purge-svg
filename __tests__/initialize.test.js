@@ -1,3 +1,4 @@
+/* eslint no-new: "off" */
 const PurgeSvg = require('./../src')
 const {
     ERROR_CONFIG_FILE_LOADING,
