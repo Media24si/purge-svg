@@ -4,11 +4,11 @@
 
 ## What is PurgeSvg
 
-If you're using external SVG sprites for your icon system there is a good chance to have a lot of unused icons.
+If you're using external SVG sprites for your icon system there is a good chance you have a lot of unused icons at the end.
 
-PurgeSvg will analyze your content and will remove all unused icons. This will make your SVG file a lot smaller.
+PurgeSvg will analyze your content and remove all unused icons. This will make your SVG file a lot smaller.
 
-It also enables you to merge more SVG file into one and reducing network requests.
+It also enables you to merge more SVG files into one and thereby reducing network requests.
 
 **:bangbang: Warning :bangbang:️**
 
@@ -50,7 +50,7 @@ purgesvg --config /path/to/config.js
 
 #### Options
 
-:heavy_check_mark: When using without configuration file `--content` and `--svgs` options are required.
+:heavy_check_mark: When not using a configuration file the `--content` and `--svgs` options are required.
 
 * ##### --content
 
@@ -66,18 +66,18 @@ SVG files to purge. An array of filenames or glob.
 
 * ##### --out
 
-Output path for purges svgs. 
+Output path for purged SVGs. 
 
-It can be:
- * directory - purged files will be placed in this folder as the same filename as svg
- * path to a file - all svgs will be purged and merged into this files
- * missing - if this option is missing purged svgs will be put beside original file as `filename.purged.svg`
+The output path can be:
+ * a directory - the purged files will be placed in this folder with the same filename as the SVG
+ * a path to a file - all SVGs will be purged and merged into this file
+ * missing - if this option is missing the purged SVGs will be put beside the original file as `filename.purged.svg`
 
 `purgesvg --content index.html --svgs /icons/*.svg --out /build/purged/icons.svg`
 
 * ##### --whitelist
 
-List of whitelist ids. Id's will be whitelisted for all svg files.
+List of whitelist ids. Id's will be whitelisted for all SVG files.
 
 `purgesvg --content index.html --svgs /icons/*.svg --whitelist rocket heart times`
 
@@ -89,9 +89,9 @@ Start by installing the package as a development dependency
 npm i --save-dev purgesvg
 ```
 
-You can use PurgeSvg in your javascript file. Just require the package, create the new PurgeSvg class with configuration and call purge method.
+You can use PurgeSvg in your javascript file. Just require the package, create the new PurgeSvg class, add configuration options and call the purge method.
 
-The constructor accepts configuration object or path to the configuration file.
+The constructor accepts a configuration object or a path to the configuration file.
 
 ```javascript
 const PurgeSvg = require('purgesvg')
@@ -116,7 +116,7 @@ new PurgeSvg({
 
 * #### content
 
-Content that should be analyzed. Content option is array of files or [globs](https://github.com/isaacs/node-glob/blob/master/README.md#glob-primer).
+Content that should be analyzed. The content option is an array of files or [globs](https://github.com/isaacs/node-glob/blob/master/README.md#glob-primer).
 
 ```javascript
 new PurgeSvg({
@@ -125,11 +125,11 @@ new PurgeSvg({
 }
 ```
 
-* #### svgs
+* #### SVGs
 
-List of SVG files that should be purged and their output configuration. The list could be an array of files/globs or array of objects.
+A list of SVG files that should be purged and their output configuration. The list could be an array of files/globs or an array of objects.
 
-When provided as an array of strings (files/globs) the purged file will be saved in the same folder as `filename.purged.svg`.
+When provided as an array of strings (files/globs) the purged file will be saved in the same folder as the original as `filename.purged.svg`.
 
 ```javascript
 new PurgeSvg({
@@ -138,7 +138,7 @@ new PurgeSvg({
 }
 ```
 
-Providing an array of objects gives more options. Some examples of different options
+Providing an array of objects provides more options. Some examples of different options
 
 ```javascript
 new PurgeSvg({
@@ -161,13 +161,13 @@ new PurgeSvg({
 
 * #### whitelist
 
-Provides option to whitelist ids of svg sprites. The option is to whitelist ids for all files or by svg file.
+Provides the option to whitelist ids of SVG sprites. The option can be used to whitelist ids for all files or only for specific SVG files.
 
 ```javascript
 new PurgeSvg({
     whitelist: {
         '*': new Set(['rocket', 'heart', ...]), // whitelist id's for all files
-        'solid.svg': new Set(['building', 'times', ...]) // whitelist id's only for specific file
+        'solid.svg': new Set(['building', 'times', ...]) // whitelist id's only for a specific file
     },
     ...
 }
@@ -175,7 +175,7 @@ new PurgeSvg({
 
 ### Configuration file
 
-The configuration file is a simple JavaScript file with all options:
+The configuration file is a simple JavaScript file containing options:
 
 ```javascript
 module.export = {
