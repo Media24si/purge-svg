@@ -138,7 +138,7 @@ new PurgeSvg({
 }
 ```
 
-Providing an array of objects provides more options. Some examples of different options
+Providing an array of objects enables more versatility. Some examples of different options:
 
 ```javascript
 new PurgeSvg({
