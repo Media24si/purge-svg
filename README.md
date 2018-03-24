@@ -178,7 +178,7 @@ new PurgeSvg({
 The configuration file is a simple JavaScript file containing options:
 
 ```javascript
-module.export = {
+module.exports = {
     content: ['index.html'],
     svgs: [{
         in: 'images/*.svg'
