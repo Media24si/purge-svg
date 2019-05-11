@@ -162,8 +162,6 @@ class PurgeSvg {
                 outSvgs[svgObj.out] = []
             }
 
-            console.log(symbols)
-
             outSvgs[svgObj.out].push(
                 ...symbols.filter((s) => ids.has(s._attributes.id))
             )
