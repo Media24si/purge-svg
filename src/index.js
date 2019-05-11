@@ -144,20 +144,28 @@ class PurgeSvg {
 
             const svg = xml2js(fs.readFileSync(svgObj.in, 'utf8'), {compact: true})
 
-            if (typeof svg.svg.symbol === 'undefined') {
+            let symbols = svg.svg.symbol;
+
+            if (typeof symbols === 'undefined') {
+                symbols = svg.svg.defs.symbol;
+            }
+
+            if (typeof symbols === 'undefined') {
                 return
             }
 
-            if (!Array.isArray(svg.svg.symbol)) {
-                svg.svg.symbol = [svg.svg.symbol]
+            if (!Array.isArray(symbols)) {
+                symbols = [symbols]
             }
 
             if (!Array.isArray(outSvgs[svgObj.out])) {
                 outSvgs[svgObj.out] = []
             }
 
+            console.log(symbols)
+
             outSvgs[svgObj.out].push(
-                ...svg.svg.symbol.filter((s) => ids.has(s._attributes.id))
+                ...symbols.filter((s) => ids.has(s._attributes.id))
             )
         })
 

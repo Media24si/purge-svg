@@ -100,6 +100,28 @@ describe('purge method', () => {
         expect(fileContent.includes('bookmark')).toBeTruthy()
     })
 
+    it('should word with symbols wrapped in defs', () => {
+        const iconPath = `${tempFolder}icons.svg`
+
+        new PurgeSvg({
+            content: './__tests__/test_examples/defs_svgs/index.html',
+            svgs: [{
+                in: './__tests__/test_examples/defs_svgs/icons.svg',
+                out: tempFolder
+            }],
+            whitelist: {'*': ['building']}
+        }).purge()
+
+        expect(fs.existsSync(iconPath)).toBeTruthy()
+
+        let fileContent = xml2js(fs.readFileSync(iconPath, 'utf8'),
+            {compact: true})
+        fileContent = JSON.stringify(fileContent)
+
+        expect(fileContent.includes('building')).toBeTruthy()
+        expect(fileContent.includes('bookmark')).toBeTruthy()
+    })
+
     it('should not break with plain svg', () => {
         const iconPath = `${tempFolder}icons.svg`
 
