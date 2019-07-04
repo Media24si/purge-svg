@@ -1,7 +1,7 @@
 /* eslint no-new: "off" */
 const appRoot = require('app-root-path')
 const fs = require('fs')
-const {xml2js} = require('xml-js')
+const { xml2js } = require('xml-js')
 
 const PurgeSvg = require('./../src')
 const rootPath = appRoot.path
@@ -43,15 +43,16 @@ describe('purge method', () => {
 
         new PurgeSvg({
             content: './__tests__/test_examples/clean_svgs/index.html',
-            svgs: [{
-                in: './__tests__/test_examples/clean_svgs/icons.svg',
-                out: tempFolder
-            }]
+            svgs: [
+                {
+                    in: './__tests__/test_examples/clean_svgs/icons.svg',
+                    out: tempFolder,
+                }],
         }).purge()
 
         expect(fs.existsSync(iconPath)).toBeTruthy()
 
-        let fileContent = xml2js(fs.readFileSync(iconPath, 'utf8'), {compact: true})
+        let fileContent = xml2js(fs.readFileSync(iconPath, 'utf8'), { compact: true })
         fileContent = JSON.stringify(fileContent)
 
         expect(fileContent.includes('building')).toBeFalsy()
@@ -63,15 +64,16 @@ describe('purge method', () => {
 
         new PurgeSvg({
             content: './__tests__/test_examples/clean_svgs/index-2.html',
-            svgs: [{
-                in: './__tests__/test_examples/clean_svgs/icons-2.svg',
-                out: tempFolder
-            }]
+            svgs: [
+                {
+                    in: './__tests__/test_examples/clean_svgs/icons-2.svg',
+                    out: tempFolder,
+                }],
         }).purge()
 
         expect(fs.existsSync(iconPath)).toBeTruthy()
 
-        let fileContent = xml2js(fs.readFileSync(iconPath, 'utf8'), {compact: true})
+        let fileContent = xml2js(fs.readFileSync(iconPath, 'utf8'), { compact: true })
         fileContent = JSON.stringify(fileContent)
 
         expect(fileContent.includes('building')).toBeFalsy()
@@ -83,17 +85,18 @@ describe('purge method', () => {
 
         new PurgeSvg({
             content: './__tests__/test_examples/clean_svgs/index.html',
-            svgs: [{
-                in: './__tests__/test_examples/clean_svgs/icons.svg',
-                out: tempFolder
-            }],
-            whitelist: {'*': ['building']}
+            svgs: [
+                {
+                    in: './__tests__/test_examples/clean_svgs/icons.svg',
+                    out: tempFolder,
+                }],
+            whitelist: { '*': ['building'] },
         }).purge()
 
         expect(fs.existsSync(iconPath)).toBeTruthy()
 
         let fileContent = xml2js(fs.readFileSync(iconPath, 'utf8'),
-            {compact: true})
+            { compact: true })
         fileContent = JSON.stringify(fileContent)
 
         expect(fileContent.includes('building')).toBeTruthy()
@@ -105,17 +108,18 @@ describe('purge method', () => {
 
         new PurgeSvg({
             content: './__tests__/test_examples/defs_svgs/index.html',
-            svgs: [{
-                in: './__tests__/test_examples/defs_svgs/icons.svg',
-                out: tempFolder
-            }],
-            whitelist: {'*': ['building']}
+            svgs: [
+                {
+                    in: './__tests__/test_examples/defs_svgs/icons.svg',
+                    out: tempFolder,
+                }],
+            whitelist: { '*': ['building'] },
         }).purge()
 
         expect(fs.existsSync(iconPath)).toBeTruthy()
 
         let fileContent = xml2js(fs.readFileSync(iconPath, 'utf8'),
-            {compact: true})
+            { compact: true })
         fileContent = JSON.stringify(fileContent)
 
         expect(fileContent.includes('building')).toBeTruthy()
@@ -130,19 +134,19 @@ describe('purge method', () => {
             svgs: [
                 {
                     in: './__tests__/test_examples/clean_svgs/*.svg',
-                    out: tempFolder
+                    out: tempFolder,
                 },
                 {
                     in: './__tests__/test_examples/single.svg',
-                    out: tempFolder
-                }
+                    out: tempFolder,
+                },
             ],
-            whitelist: {}
+            whitelist: {},
         }).purge()
 
         expect(fs.existsSync(iconPath)).toBeTruthy()
 
-        let fileContent = xml2js(fs.readFileSync(iconPath, 'utf8'), {compact: true})
+        let fileContent = xml2js(fs.readFileSync(iconPath, 'utf8'), { compact: true })
         fileContent = JSON.stringify(fileContent)
 
         expect(fileContent.includes('building')).toBeFalsy()
@@ -172,16 +176,17 @@ describe('purge and merge', () => {
 
         new PurgeSvg({
             content: `${folder}merge.html`,
-            svgs: [{
-                in: `${folder}*.svg`,
-                out: iconPath
-            }],
-            whitelist: {}
+            svgs: [
+                {
+                    in: `${folder}*.svg`,
+                    out: iconPath,
+                }],
+            whitelist: {},
         }).purge()
 
         expect(fs.existsSync(iconPath)).toBeTruthy()
 
-        let fileContent = xml2js(fs.readFileSync(iconPath, 'utf8'), {compact: true})
+        let fileContent = xml2js(fs.readFileSync(iconPath, 'utf8'), { compact: true })
         fileContent = JSON.stringify(fileContent)
 
         expect(fileContent.includes('building')).toBeFalsy()

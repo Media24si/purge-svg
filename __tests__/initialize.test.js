@@ -4,7 +4,7 @@ const {
     ERROR_CONFIG_FILE_LOADING,
     ERROR_MISSING_CONTENT,
     ERROR_MISSING_SVGS,
-    ERROR_WHITELIST_TYPE
+    ERROR_WHITELIST_TYPE,
 } = require('./../src/constants')
 
 describe('initialize purgesvg', () => {
@@ -23,14 +23,14 @@ describe('initialize purgesvg', () => {
     it('throws an error without content option', () => {
         expect(() => {
             new PurgeSvg({
-                svgs: ['icons.svg']
+                svgs: ['icons.svg'],
             })
         }).toThrow(ERROR_MISSING_CONTENT)
 
         expect(() => {
             new PurgeSvg({
                 svgs: ['icons.svg'],
-                content: []
+                content: [],
             })
         }).toThrow(ERROR_MISSING_CONTENT)
     })
@@ -38,14 +38,14 @@ describe('initialize purgesvg', () => {
     it('throws an error without svgs option', () => {
         expect(() => {
             new PurgeSvg({
-                content: 'index.html'
+                content: 'index.html',
             })
         }).toThrow(ERROR_MISSING_SVGS)
 
         expect(() => {
             new PurgeSvg({
                 content: 'index.html',
-                svgs: []
+                svgs: [],
             })
         }).toThrow(ERROR_MISSING_SVGS)
     })
@@ -55,7 +55,7 @@ describe('initialize purgesvg', () => {
             new PurgeSvg({
                 content: 'index.html',
                 svgs: ['icons.svg'],
-                whitelist: []
+                whitelist: [],
             })
         }).toThrow(ERROR_WHITELIST_TYPE)
 
@@ -63,7 +63,7 @@ describe('initialize purgesvg', () => {
             new PurgeSvg({
                 content: 'index.html',
                 svgs: ['icons.svg'],
-                whitelist: 'invalid'
+                whitelist: 'invalid',
             })
         }).toThrow(ERROR_WHITELIST_TYPE)
     })
@@ -71,12 +71,12 @@ describe('initialize purgesvg', () => {
     it('sets up options when providing an object', () => {
         const ps = new PurgeSvg({
             content: ['index.html'],
-            svgs: ['icons.svg']
+            svgs: ['icons.svg'],
         })
 
         expect(ps.options).toMatchObject({
             content: ['index.html'],
-            svgs: ['icons.svg']
+            svgs: ['icons.svg'],
         })
     })
 
@@ -85,7 +85,7 @@ describe('initialize purgesvg', () => {
 
         expect(ps.options).toMatchObject({
             content: ['./__tests__/test_examples/extract_content_ids/index.html'],
-            svgs: [{in: './__tests__/test_examples/svgs/icons.svg'}]
+            svgs: [{ in: './__tests__/test_examples/svgs/icons.svg' }],
         })
     })
 })

@@ -1,5 +1,5 @@
 const path = require('path')
-const {xml2js, js2xml} = require('xml-js')
+const { xml2js, js2xml } = require('xml-js')
 const fs = require('fs')
 const glob = require('glob')
 
@@ -9,13 +9,13 @@ const {
     ERROR_MISSING_CONTENT,
     ERROR_MISSING_SVGS,
     ERROR_OPTIONS_TYPE,
-    ERROR_WHITELIST_TYPE
+    ERROR_WHITELIST_TYPE,
 } = require('./constants')
 
 const defaultOptions = {
     content: [],
     svgs: [],
-    whitelist: {'*': new Set()}
+    whitelist: { '*': new Set() },
 }
 
 const removeDuplicates = (filePath, index, array) => array.indexOf(filePath) === index
@@ -35,7 +35,7 @@ class PurgeSvg {
     static loadConfigFile (configFile = CONFIG_FILENAME) {
         try {
             return require(
-                path.resolve(process.cwd(), configFile)
+                path.resolve(process.cwd(), configFile),
             )
         } catch (e) {
             throw new Error(ERROR_CONFIG_FILE_LOADING)
@@ -67,20 +67,17 @@ class PurgeSvg {
                 return [filePath]
             }
 
-            return [...glob.sync(filePath, {nodir: true})]
-        })
-            .reduce(flatten, [])
-            .filter(removeDuplicates)
-            .map(filePath => path.resolve(filePath))
+            return [...glob.sync(filePath, { nodir: true })]
+        }).reduce(flatten, []).filter(removeDuplicates).map(filePath => path.resolve(filePath))
     }
 
     static prepareSvgPaths (svgs) {
         return svgs.map(svg => {
             if (typeof svg === 'string') {
-                svg = {in: svg}
+                svg = { in: svg }
             }
 
-            const paths = fs.existsSync(svg.in) ? [svg.in] : glob.sync(svg.in, {nodir: true})
+            const paths = fs.existsSync(svg.in) ? [svg.in] : glob.sync(svg.in, { nodir: true })
 
             return paths.map(svgPath => {
                 let out = svg.out || path.resolve(svgPath).replace('.svg', '.purged.svg')
@@ -89,7 +86,7 @@ class PurgeSvg {
                 if (!out.endsWith('.svg')) {
                     out = path.format({
                         dir: out,
-                        base: path.basename(svgPath)
+                        base: path.basename(svgPath),
                     })
                 }
 
@@ -97,7 +94,7 @@ class PurgeSvg {
                     filename: path.basename(svgPath),
                     in: path.resolve(svgPath),
                     out,
-                    prefix: svg.prefix || ''
+                    prefix: svg.prefix || '',
                 }
             })
         }).reduce(flatten, [])
@@ -139,15 +136,15 @@ class PurgeSvg {
             const ids = new Set([
                 ...(contentIds[svgObj.filename] || []),
                 ...(this.options.whitelist[svgObj.filename] || []),
-                ...(this.options.whitelist['*'] || [])
+                ...(this.options.whitelist['*'] || []),
             ])
 
-            const svg = xml2js(fs.readFileSync(svgObj.in, 'utf8'), {compact: true})
+            const svg = xml2js(fs.readFileSync(svgObj.in, 'utf8'), { compact: true })
 
-            let symbols = svg.svg.symbol;
+            let symbols = svg.svg.symbol
 
             if (typeof symbols === 'undefined') {
-                symbols = svg.svg.defs.symbol;
+                symbols = svg.svg.defs.symbol
             }
 
             if (typeof symbols === 'undefined') {
@@ -163,7 +160,7 @@ class PurgeSvg {
             }
 
             outSvgs[svgObj.out].push(
-                ...symbols.filter((s) => ids.has(s._attributes.id))
+                ...symbols.filter((s) => ids.has(s._attributes.id)),
             )
         })
 
@@ -172,23 +169,23 @@ class PurgeSvg {
                 _declaration: {
                     _attributes: {
                         version: '1.0',
-                        encoding: 'UTF-8'
-                    }
+                        encoding: 'UTF-8',
+                    },
                 },
                 svg: {
                     _attributes: {
                         xmlns: 'http://www.w3.org/2000/svg',
-                        style: 'display: none;'
+                        style: 'display: none;',
                     },
-                    symbol: outSvgs[filename]
-                }
+                    symbol: outSvgs[filename],
+                },
             }
 
             if (!fs.existsSync(path.dirname(filename))) {
                 fs.mkdirSync(path.dirname(filename))
             }
 
-            fs.writeFileSync(filename, js2xml(svg, {compact: true, spaces: 2}))
+            fs.writeFileSync(filename, js2xml(svg, { compact: true, spaces: 2 }))
         }
     }
 }

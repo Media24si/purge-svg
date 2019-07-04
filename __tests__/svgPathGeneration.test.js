@@ -13,57 +13,57 @@ describe('svg paths generation', () => {
                 filename: 'icons.svg',
                 in: `${rootPath}/__tests__/test_examples/clean_svgs/icons.svg`,
                 out: `${rootPath}/__tests__/test_examples/clean_svgs/icons.purged.svg`,
-                prefix: ''
-            }
+                prefix: '',
+            },
         ])
 
         expect(PurgeSvg.prepareSvgPaths([
             `${root}clean_svgs/icons.svg`,
-            `${root}clean_svgs/icons-2.svg`
+            `${root}clean_svgs/icons-2.svg`,
         ])).toEqual([
             {
                 filename: 'icons.svg',
                 in: `${rootPath}/__tests__/test_examples/clean_svgs/icons.svg`,
                 out: `${rootPath}/__tests__/test_examples/clean_svgs/icons.purged.svg`,
-                prefix: ''
+                prefix: '',
             },
             {
                 filename: 'icons-2.svg',
                 in: `${rootPath}/__tests__/test_examples/clean_svgs/icons-2.svg`,
                 out: `${rootPath}/__tests__/test_examples/clean_svgs/icons-2.purged.svg`,
-                prefix: ''
-            }
+                prefix: '',
+            },
         ])
     })
 
     it('should keep same name but set folder for output', () => {
         expect(PurgeSvg.prepareSvgPaths([
-            {in: `${root}clean_svgs/icons.svg`, 'out': '/foo/bar'}
+            { in: `${root}clean_svgs/icons.svg`, 'out': '/foo/bar' },
         ])).toEqual([
             {
                 filename: 'icons.svg',
                 in: `${rootPath}/__tests__/test_examples/clean_svgs/icons.svg`,
                 out: `/foo/bar/icons.svg`,
-                prefix: ''
-            }
+                prefix: '',
+            },
         ])
 
         expect(PurgeSvg.prepareSvgPaths([
-            {in: `${root}clean_svgs/icons.svg`, 'out': '/foo/bar'},
-            {in: `${root}clean_svgs/icons-2.svg`, 'out': '/foo/bar'}
+            { in: `${root}clean_svgs/icons.svg`, 'out': '/foo/bar' },
+            { in: `${root}clean_svgs/icons-2.svg`, 'out': '/foo/bar' },
         ])).toEqual([
             {
                 filename: 'icons.svg',
                 in: `${rootPath}/__tests__/test_examples/clean_svgs/icons.svg`,
                 out: `/foo/bar/icons.svg`,
-                prefix: ''
+                prefix: '',
             },
             {
                 filename: 'icons-2.svg',
                 in: `${rootPath}/__tests__/test_examples/clean_svgs/icons-2.svg`,
                 out: `/foo/bar/icons-2.svg`,
-                prefix: ''
-            }
+                prefix: '',
+            },
         ])
     })
 
@@ -73,78 +73,80 @@ describe('svg paths generation', () => {
                 filename: 'icons-2.svg',
                 in: `${rootPath}/__tests__/test_examples/clean_svgs/icons-2.svg`,
                 out: `${rootPath}/__tests__/test_examples/clean_svgs/icons-2.purged.svg`,
-                prefix: ''
+                prefix: '',
             },
             {
                 filename: 'icons.svg',
                 in: `${rootPath}/__tests__/test_examples/clean_svgs/icons.svg`,
                 out: `${rootPath}/__tests__/test_examples/clean_svgs/icons.purged.svg`,
-                prefix: ''
-            }
+                prefix: '',
+            },
         ])
     })
 
     it('should change object with only in to full object', () => {
-        expect(PurgeSvg.prepareSvgPaths([{in: `${rootPath}/__tests__/test_examples/clean_svgs/icons.svg`}])).toEqual([
+        expect(PurgeSvg.prepareSvgPaths([{ in: `${rootPath}/__tests__/test_examples/clean_svgs/icons.svg` }])).toEqual([
             {
                 filename: 'icons.svg',
                 in: `${rootPath}/__tests__/test_examples/clean_svgs/icons.svg`,
                 out: `${rootPath}/__tests__/test_examples/clean_svgs/icons.purged.svg`,
-                prefix: ''
-            }
+                prefix: '',
+            },
         ])
     })
 
     it('should change object with only in (glob) to full object', () => {
-        expect(PurgeSvg.prepareSvgPaths([{in: `${rootPath}/__tests__/test_examples/clean_svgs/*.svg`}])).toEqual([
+        expect(PurgeSvg.prepareSvgPaths([{ in: `${rootPath}/__tests__/test_examples/clean_svgs/*.svg` }])).toEqual([
             {
                 filename: 'icons-2.svg',
                 in: `${rootPath}/__tests__/test_examples/clean_svgs/icons-2.svg`,
                 out: `${rootPath}/__tests__/test_examples/clean_svgs/icons-2.purged.svg`,
-                prefix: ''
+                prefix: '',
             },
             {
                 filename: 'icons.svg',
                 in: `${rootPath}/__tests__/test_examples/clean_svgs/icons.svg`,
                 out: `${rootPath}/__tests__/test_examples/clean_svgs/icons.purged.svg`,
-                prefix: ''
-            }
+                prefix: '',
+            },
         ])
     })
 
     it('should leave full object', () => {
-        expect(PurgeSvg.prepareSvgPaths([{
-            in: `${rootPath}/__tests__/test_examples/clean_svgs/icons.svg`,
-            out: `${rootPath}/__tests__/test_examples/test_folder/icons.svg`,
-            prefix: 'foo'
-        }])).toEqual([
+        expect(PurgeSvg.prepareSvgPaths([
+            {
+                in: `${rootPath}/__tests__/test_examples/clean_svgs/icons.svg`,
+                out: `${rootPath}/__tests__/test_examples/test_folder/icons.svg`,
+                prefix: 'foo',
+            }])).toEqual([
             {
                 filename: 'icons.svg',
                 in: `${rootPath}/__tests__/test_examples/clean_svgs/icons.svg`,
                 out: `${rootPath}/__tests__/test_examples/test_folder/icons.svg`,
-                prefix: 'foo'
-            }
+                prefix: 'foo',
+            },
         ])
     })
 
     it('should levt object with glob path', () => {
-        expect(PurgeSvg.prepareSvgPaths([{
-            in: `${rootPath}/__tests__/test_examples/clean_svgs/*.svg`,
-            out: `${rootPath}/__tests__/test_examples/test_folder/icons.svg`,
-            prefix: 'foo'
-        }])).toEqual([
+        expect(PurgeSvg.prepareSvgPaths([
+            {
+                in: `${rootPath}/__tests__/test_examples/clean_svgs/*.svg`,
+                out: `${rootPath}/__tests__/test_examples/test_folder/icons.svg`,
+                prefix: 'foo',
+            }])).toEqual([
             {
                 filename: 'icons-2.svg',
                 in: `${rootPath}/__tests__/test_examples/clean_svgs/icons-2.svg`,
                 out: `${rootPath}/__tests__/test_examples/test_folder/icons.svg`,
-                prefix: 'foo'
+                prefix: 'foo',
             },
             {
                 filename: 'icons.svg',
                 in: `${rootPath}/__tests__/test_examples/clean_svgs/icons.svg`,
                 out: `${rootPath}/__tests__/test_examples/test_folder/icons.svg`,
-                prefix: 'foo'
-            }
+                prefix: 'foo',
+            },
         ])
     })
 })

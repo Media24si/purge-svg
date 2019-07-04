@@ -8,18 +8,18 @@ describe('content svg id-s extraction method', () => {
             `${root}extract_content_ids/index.html`)
 
         expect(ids).toEqual({
-            'icons.svg': new Set(['bookmark'])
+            'icons.svg': new Set(['bookmark']),
         })
     })
 
     it('should extract ids from multiple content file', () => {
         const ids = PurgeSvg.extractContentIds([
             `${root}extract_content_ids/index.html`,
-            `${root}extract_content_ids/index.php`
+            `${root}extract_content_ids/index.php`,
         ])
 
         expect(ids).toEqual({
-            'icons.svg': new Set(['bookmark', 'calendar'])
+            'icons.svg': new Set(['bookmark', 'calendar']),
         })
     })
 
@@ -27,7 +27,7 @@ describe('content svg id-s extraction method', () => {
         const ids = PurgeSvg.extractContentIds(`${root}extract_content_ids/index*`)
 
         expect(ids).toEqual({
-            'icons.svg': new Set([`bookmark`, `calendar`, 'building'])
+            'icons.svg': new Set([`bookmark`, `calendar`, 'building']),
         })
     })
 
@@ -38,7 +38,7 @@ describe('content svg id-s extraction method', () => {
         expect(ids).toEqual({
             'icons.svg': new Set(['bookmark', 'money']),
             'foo.svg': new Set(['rocket']),
-            'bar.svg': new Set(['euro'])
+            'bar.svg': new Set(['euro']),
         })
     })
 })
