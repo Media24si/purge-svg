@@ -30,6 +30,11 @@ yargsBin = yargs
         type: 'array',
         default: []
     })
+    .option('d', {
+        alias: 'dev',
+        description: 'Skip purging during development',
+        type: 'boolean',
+    })
     .demandCommand(0)
     .help()
     .alias('h', 'help')
@@ -38,7 +43,7 @@ yargsBin = yargs
 argv = yargs.argv
 
 if (argv.config) {
-    new PurgeSVG(argv.config).purge()
+    new PurgeSVG(argv).purge()
     return
 }
 
