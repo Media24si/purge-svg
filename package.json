@@ -1,6 +1,6 @@
 {
     "name": "purgesvg",
-    "version": "1.0.5",
+    "version": "1.1.0",
     "license": "MIT",
     "description": "Remove unused svg symbols and optionaly merge svg files",
     "homepage": "https://github.com/Media24si/purge-svg",
@@ -12,7 +12,9 @@
         "url": "https://github.com/Media24si/purge-svg/issues"
     },
     "main": "./src/index.js",
-    "bin": "./bin/purgesvg",
+    "bin": {
+        "purgesvg": "bin/purgesvg"
+    },
     "directories": {
         "test": "__tests__"
     },
