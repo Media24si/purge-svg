@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable no-undef */
 const yargs = require('yargs')
 const PurgeSVG = require('../src/index.js')
 
@@ -7,28 +8,28 @@ yargsBin = yargs
     .option('content', {
         alias: 'content',
         description: 'glob of content files',
-        type: 'array'
+        type: 'array',
     })
     .option('svgs', {
         alias: 'svgs',
         description: 'glob of svgs files',
-        type: 'array'
+        type: 'array',
     })
     .option('c', {
         alias: 'config',
         description: 'configuration file',
-        type: 'string'
+        type: 'string',
     })
     .option('o', {
         alias: 'out',
         description: 'Filepath directory to write purified svg files to',
-        type: 'string'
+        type: 'string',
     })
     .option('w', {
         alias: 'whitelist',
         description: 'List of id\'s that should not be removed',
         type: 'array',
-        default: []
+        default: [],
     })
     .demandCommand(0)
     .help()
@@ -51,7 +52,7 @@ options = {
     content: argv.content,
     svgs: argv.svgs.map((path) => {
         svgObj = {
-            in: path
+            in: path,
         }
 
         if (typeof argv.out !== 'undefined') {
@@ -60,7 +61,7 @@ options = {
 
         return svgObj
     }),
-    whitelist: {'*': new Set(argv.whitelist)}
+    whitelist: { '*': new Set(argv.whitelist) },
 }
 
 new PurgeSVG(options).purge()

@@ -27,7 +27,7 @@ describe('content svg id-s extraction method', () => {
         const ids = PurgeSvg.extractContentIds(`${root}extract_content_ids/index*`)
 
         expect(ids).toEqual({
-            'icons.svg': new Set([`bookmark`, `calendar`, 'building']),
+            'icons.svg': new Set(['bookmark', 'calendar', 'building']),
         })
     })
 

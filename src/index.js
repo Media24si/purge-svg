@@ -164,7 +164,7 @@ class PurgeSvg {
             )
         })
 
-        for (let filename in outSvgs) {
+        for (const filename in outSvgs) {
             const svg = {
                 _declaration: {
                     _attributes: {
