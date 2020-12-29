@@ -23,8 +23,11 @@ const flatten = (arr, initialVal) => [...arr, ...initialVal]
 
 class PurgeSvg {
     constructor (options) {
-        if (typeof options === 'string' || typeof options === 'undefined') {
-            options = PurgeSvg.loadConfigFile(options)
+        if (options.config) {
+            const dev = options.dev
+            options = PurgeSvg.loadConfigFile(options.config)
+            if (dev) options.dev = dev
+            else if (options.env === 'dev') options.dev = true
         }
 
         PurgeSvg.validateOptions(options)
@@ -159,9 +162,14 @@ class PurgeSvg {
                 outSvgs[svgObj.out] = []
             }
 
-            outSvgs[svgObj.out].push(
-                ...symbols.filter((s) => ids.has(s._attributes.id)),
-            )
+            if (this.options.dev){
+                outSvgs[svgObj.out].push(...symbols)
+            }
+            else{
+                outSvgs[svgObj.out].push(
+                    ...symbols.filter((s) => ids.has(s._attributes.id)),
+                )
+            }
         })
 
         for (const filename in outSvgs) {
