@@ -101,7 +101,7 @@ class PurgeSvg {
     }
 
     static extractContentIds (content) {
-        const regex = /xlink:href="([\S]+)#([\S]+)"/g
+        const regex = /<use \S.*href="([\S]+)#([\S]+)"/g
 
         const icons = {}
 
